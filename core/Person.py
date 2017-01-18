@@ -4,6 +4,13 @@ class GENDER:
 	MALE = -1
 	FEMALE = 1
 
+class RELATIONSHIP:
+	IS_WIFE = 0
+	IS_HUSBAND = 1
+	IS_CHILDREN = 2
+	IS_MOTHER = 3
+	IS_FATHER = 4
+
 class Person:
 	def __init__(self, idp, name, gender, year):
 		self.__id = idp
@@ -19,7 +26,7 @@ class Person:
 		if mother.getGender() == GENDER.FEMALE and \
 		mother.getBirthYear() > self.__birthYear+10 and \
 		mother.getBirthYear() < self.__birthYear+60:
-			self.__mother = mother.getID()
+			self.__motherId = mother.getID()
 			mother.addChildren(self)
 		else:
 			print("Error: [Person] Can not set "+mother.getName()+" as mother of "+self.__fullName)
@@ -63,6 +70,12 @@ class Person:
 
 	def getBirthYear(self):
 		return self.__birthYear
+
+	def getFatherID(self):
+		return self.__fatherId
+
+	def getMotherID(self):
+		return self.__motherId
 
 	def getCoupleIDs(self):
 		return self.__coupleIds
