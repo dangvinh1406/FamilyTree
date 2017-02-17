@@ -1,10 +1,10 @@
-import queue as qu
+import Queue as qu
 
 from core.Person import *
 
 class FamilyTree:
-	def __init__(self, familyId):
-		self.__familyID = familyId
+	def __init__(self, familyName):
+		self.__familyName = familyName
 		self.__tree = {}
 		self.__backTracer = {}
 
