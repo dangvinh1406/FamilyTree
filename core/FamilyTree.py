@@ -3,7 +3,8 @@ import Queue as qu
 from core.Person import *
 
 class FamilyTree:
-	def __init__(self, familyName):
+	def __init__(self, idf, familyName):
+		self.__idFamily = idf
 		self.__familyName = familyName
 		self.__tree = {}
 		self.__backTracer = {}
@@ -60,3 +61,8 @@ class FamilyTree:
 				self.__backTracer[self.__tree[nodeId].getFatherID()] = (nodeId, RELATIONSHIP.CHILDREN)
 
 		return relationships
+
+	def toString(self):
+		stringData = ""
+		for key, person in d.iteritems():
+			stringData += person.toString()+"\n"

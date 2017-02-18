@@ -4,6 +4,29 @@ class GENDER:
 	MALE = -1
 	FEMALE = 1
 
+	@staticmethod
+	def toString(gender):
+		if gender == GENDER.MALE:
+			return "male"
+		elif gender == GENDER.FEMALE:
+			return "female"
+		else:
+			return "unknown"
+
+	@staticmethod
+	def fromString(gender):
+		if gender == "male" or gender == "MALE":
+			return GENDER.MALE
+		else:
+			return GENDER.FEMALE
+
+	@staticmethod
+	def fromInt(gender):
+		if gender == 1:
+			return GENDER.FEMALE
+		else:
+			return GENDER.MALE
+
 class RELATIONSHIP:
 	IS_WIFE = 0
 	IS_HUSBAND = 1
@@ -12,7 +35,7 @@ class RELATIONSHIP:
 	IS_FATHER = 4
 
 class Person:
-	def __init__(self, idp, name, gender, year):
+	def __init__(self, idp, name, year, gender):
 		self.__id = idp
 		self.__fullName = name
 		self.__gender = gender
@@ -85,6 +108,13 @@ class Person:
 
 	def getNumOfChilds(self):
 		return len(self.__childIds)
+
+	def toString(self):
+		return str(self.getID())+". "+ \
+				self.getName()+" ("+ \
+				str(getBirthYear(self))+"), "+ \
+				GENDER.toString(self.getGender())
+
 
 	
 
