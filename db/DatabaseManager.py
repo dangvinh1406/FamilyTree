@@ -51,7 +51,7 @@ class DatabaseManager:
 		cursor = self.__connection.cursor()
 		cursor.execute(
 			"INSERT INTO person(family_id, person_name, birth_year,gender)"+ \
-			"VALUES("+str(family)+","+"'"+name+"'"+str(year)+","+str(gender)+");"
+			"VALUES("+str(family)+","+"'"+name+"',"+str(year)+","+str(gender)+");"
 		)
 
 		cursor.execute(
@@ -61,5 +61,9 @@ class DatabaseManager:
 
 	def commit(self):
 		self.__connection.commit()
+
+	def abort(self):
+		self.__connection.close()
+		self.__connection = sqlite3.connect('dbft.db')
 
 		

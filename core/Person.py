@@ -52,7 +52,8 @@ class Person:
 			self.__motherId = mother.getID()
 			mother.addChildren(self)
 		else:
-			print("Error: [Person] Can not set "+mother.getName()+" as mother of "+self.__fullName)
+			print("Error: [Person] Can not set "+mother.getName()+ \
+				" as mother of "+self.__fullName)
 
 	def setFather(self, father):
 		if mother.getGender() == GENDER.FEMALE and \
@@ -61,7 +62,8 @@ class Person:
 			self.__fatherId = father.getID()
 			father.addChildren(self)
 		else:
-			print("Error: [Person] Can not set "+father.getName()+" as father of "+self.__fullName)
+			print("Error: [Person] Can not set "+father.getName()+ \
+				" as father of "+self.__fullName)
 
 	def addCouple(self, couple):
 		if couple.getGender()+self.__gender == 0 and \
@@ -69,7 +71,8 @@ class Person:
 			self.__coupleIds.append(couple.getID())
 			couple.addCouple(self)
 		else:
-			print("Error: [Person] Can not add "+couple.getName()+" as a couple of "+self.__fullName)
+			print("Error: [Person] Can not add "+couple.getName()+ \
+				" as a couple of "+self.__fullName)
 
 	def addChildren(self, children):
 		if children.getBirthYear()+10 < self.__birthYear and \
@@ -80,7 +83,8 @@ class Person:
 			else:
 				children.setMother(self)
 		else:
-			print("Error: [Person] Can not add "+children.getName()+" as a children of "+self.__fullName)
+			print("Error: [Person] Can not add "+children.getName()+ \
+				" as a children of "+self.__fullName)
 
 	def getID(self):
 		return self.__id

@@ -49,7 +49,8 @@ class FamilyTreeApp(Frame):
 		self.menuFile.add_command(label="New family", command=self.onClickNewFamily)
 		self.menuFile.add_command(label="Choose existed family", command=self.onClickChooseFamily)
 		self.menuFile.add_separator()
-		self.menuFile.add_command(label="Commit all changes", command=self.onClickCommit)
+		self.menuFile.add_command(label="Save all changes", command=self.onClickSave)
+		self.menuFile.add_command(label="Abort all changes", command=self.onClickAbort)
 		self.menuFile.add_separator()
 		self.menuFile.add_command(label="Exit", command=self.master.quit)
 		self.menuBar.add_cascade(label="File", menu=self.menuFile)
@@ -75,6 +76,7 @@ class FamilyTreeApp(Frame):
 		def onClickCreateFamily():
 			global popup
 			global entry
+			# update value of current family
 			currentFamilyName = entry.get()
 			self.database.storeFamily(currentFamilyName)
 			self.currentFamilyId = self.database.getCurrentId("family")
@@ -87,30 +89,40 @@ class FamilyTreeApp(Frame):
 			global popup
 			global entry
 			popup = Toplevel()
+			# use this function to disable main window until popup window close 
+			popup.grab_set()
+			# family name label
 			label = Label(popup, text="Family name: ")
 			label.pack(side=LEFT)
+			# entry text to input family name
 			entry = Entry(popup, width=30)
 			entry.pack(side=LEFT)
-			value = ""
+			# button to create family
 			createButton = Button(popup, width=10, text='Create', command=onClickCreateFamily)
 			createButton.pack()
 
 		def onClickYes():
 			apopup.destroy()
+			self.database.commit()
 			createNewFamily()
 
 		def onClickNo():
-			# TODO: remove all data of this family from database
 			apopup.destroy()
+			self.database.abort()
 			createNewFamily()
 
 		self.menuBar.entryconfig("Edit", state="normal")
 		if self.currentFamily is not None:
 			apopup = Toplevel()
+			# use this function to disable main window until popup window close
+			apopup.grab_set() 
+			# label information
 			alabel = Label(apopup, text="Would you like to store current family?")
 			alabel.pack()
+			# button Yes
 			yesButton = Button(apopup, width=10, text='Yes', command=onClickYes)
 			yesButton.pack(side=LEFT)
+			# button No
 			noButton = Button(apopup, width=10, text='No', command=onClickNo)
 			noButton.pack(side=LEFT)
 		else:
@@ -119,48 +131,83 @@ class FamilyTreeApp(Frame):
 	def onClickChooseFamily(self):
 		self.textPersonList.insert(END, 'Family information')
 
-	def onClickCommit(self):
+	def onClickSave(self):
 		self.database.commit()
+
+	def onClickAbort(self):
+		self.database.abort()
 
 	def onClickAddPerson(self):
 		def onClickAdd():
 			name = inputName.get()
 			year = int(inputYear.get())
-			gender = GENDER.MALE
-			try:
-				gender = GENDER.fromInt(map(int, genderBox.curselection()))
-			except:
-				pass	
+			gender = GENDER.fromString(genderChoiceVar.get())	
 			self.database.storePerson(self.currentFamilyId, name, year, gender)
 			currentPersonId = self.database.getCurrentId("person")
 			person = Person(currentPersonId, name, year, gender)
 			self.currentFamily.addPerson(person)
-			print("[App] Added person ",currentPersonId, name, year, gender)
 			popup.destroy()
 
 		def onClickCancel():
 			popup.destroy()
 
 		popup = Toplevel()
+		# use this function to disable main window until popup window close
+		popup.grab_set() 
+		# name label
 		nameLabel = Label(popup, width=20, text="Full name:")
 		nameLabel.grid(row=0, column=0)
+		# input name
 		inputName = Entry(popup, width=30)
 		inputName.grid(row=0, column=1)
+		# year label
 		yearLabel = Label(popup, width=20, text="Year of birth:")
 		yearLabel.grid(row=1, column=0)
+		# input year
 		inputYear = Entry(popup, width=30)
 		inputYear.grid(row=1, column=1)
+		# gender label
 		genderLabel = Label(popup, width=20, text="Gender:")
 		genderLabel.grid(row=2, column=0)
-		genderBox = Listbox(popup, selectmode=SINGLE, width=30, height=2)
-		genderBox.insert(END, "MALE")
-		genderBox.insert(END, "FEMALE")
+		# gender menu choice
+		genderChoice = ["MALE", "FEMALE"]
+		genderChoiceVar = StringVar(popup, value="Choose gender")
+		genderBox = OptionMenu(popup, genderChoiceVar, *genderChoice)
+		genderBox.config(width=25)
 		genderBox.grid(row=2, column=1)
-
+		# father label
+		fatherLabel = Label(popup, width=20, text="Father:")
+		fatherLabel.grid(row=3, column=0)
+		# father menu choice
+		fatherChoice = ["a father"]
+		fatherChoiceVar = StringVar(popup, value="Choose father")
+		fatherBox = OptionMenu(popup, fatherChoiceVar, *fatherChoice)
+		fatherBox.config(width=25)
+		fatherBox.grid(row=3, column=1)
+		# mother label
+		motherLabel = Label(popup, width=20, text="Mother:")
+		motherLabel.grid(row=4, column=0)
+		# mother menu choice
+		motherChoice = ["a mother"]
+		motherChoiceVar = StringVar(popup, value="Choose mother")
+		motherBox = OptionMenu(popup, motherChoiceVar, *motherChoice)
+		motherBox.config(width=25)
+		motherBox.grid(row=4, column=1)
+		# couple label
+		coupleLabel = Label(popup, width=20, text="Couple:")
+		coupleLabel.grid(row=5, column=0)
+		# couple menu choice
+		coupleChoice = ["a couple"]
+		coupleChoiceVar = StringVar(popup, value="Choose couple")
+		coupleBox = OptionMenu(popup, coupleChoiceVar, *coupleChoice)
+		coupleBox.config(width=25)
+		coupleBox.grid(row=5, column=1)
+		# button Add
 		addButton = Button(popup, text='Add', width=10, command=onClickAdd)
-		addButton.grid(row=3, column=0)
+		addButton.grid(row=6, column=0)
+		# button Cancel
 		cancelButton = Button(popup, text='Cancel', width=10, command=onClickCancel)
-		cancelButton.grid(row=3, column=1)
+		cancelButton.grid(row=6, column=1)
 
 	def onClickEditPerson(self):
 		print("edit person")
