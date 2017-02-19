@@ -234,6 +234,24 @@ class FamilyTreeApp(Frame):
 		print("instruction")
 
 	def onClickAbout(self):
+		global popup
+		popup = Toplevel()
+		popup.grab_set()
+		def onClickCancel():
+			popup.destroy()
+		label = Label(popup, text="Family Tree ", font=("Arial", 16))
+		label.config(width=50)
+		label.pack(side=TOP)
+		label = Label(popup, text="Version: 0.1 Beta ", font=("Helvetica", 12))
+		label.pack(side=TOP)
+		label = Label(popup, text="Developer: Ving Dang ", font=("Helvetica", 14))
+		label.pack(side=TOP)
+		label = Label(popup, text="                     Truong Dang ", font=("Helvetica", 14))
+		label.pack(side=TOP)
+		label = Label(popup, text="Email: abc@gmail.com ", font=("Courier", 10))
+		label.pack(side=TOP)
+		addButton = Button(popup, text='OK', width=10, command=onClickCancel)
+		addButton.pack(side=BOTTOM)
 		print("about")
 
 	def run(self):
