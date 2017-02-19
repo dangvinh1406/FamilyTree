@@ -11,7 +11,22 @@ class FamilyTree:
 
 	def addPerson(self, person):
 		self.__tree[person.getID()] = person
-		self.__backTracer[person.getID()] = "none"
+		self.__backTracer[person.getID()] = -1
+
+	def setFather(self, fatherId, childrenId):
+		if fatherId <= 0:
+			return
+		self.__tree[childrenId].setFather(self.__tree[fatherId])
+
+	def setMother(self, motherId, childrenId):
+		if motherId <= 0:
+			return
+		self.__tree[childrenId].setMother(self.__tree[motherId])
+
+	def setCouple(self, person1Id, person2Id):
+		if person1Id <= 0:
+			return
+		self.__tree[person2Id].setCouple(self.__tree[person1Id])
 
 	def search(self, rootId, leafId):
 		if personId1 not in self.__tree or personId2 not in self.__tree:
@@ -64,5 +79,15 @@ class FamilyTree:
 
 	def toString(self):
 		stringData = ""
-		for key, person in d.iteritems():
+		for key, person in self.__tree.iteritems():
 			stringData += person.toString()+"\n"
+		return stringData
+
+	def toListString(self, omitGender=0):
+		listData = []
+		for key, person in self.__tree.iteritems():
+			if person.getGender() != omitGender:
+				listData.append(person.toString()+"\n")
+		if len(listData) == 0:
+			listData.append("no person to choose")
+		return listData

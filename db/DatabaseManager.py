@@ -22,14 +22,24 @@ class DatabaseManager:
 				person_name TEXT NOT NULL,
 				birth_year INT NOT NULL,
 				gender INT NOT NULL,
+				father_id INT NOT NULL,
+				mother_id INT NOT NULL,
 				FOREIGN KEY(family_id) REFERENCES family(family_id)
 			);
 			"""
 		)
+		self.__connection.execute(
+			"""
+			CREATE TABLE IF NOT EXISTS couple(
+				husband_id INT NOT NULL,
+				wife_id INT NOT NULL,
+				FOREIGN KEY(husband_id) REFERENCES person(person_id),
+				FOREIGN KEY(wife_id) REFERENCES person(person_id)
+			);
+			"""
+		)
 
-	def getCurrentId(self, tablename="family"):
-		if tablename not in ["person", "family"]:
-			return -1
+	def getCurrentId(self):
 		cursor = self.__connection.cursor()
 		cursor.execute(
 			"SELECT last_insert_rowid();"
@@ -47,15 +57,32 @@ class DatabaseManager:
 		)
 		print(cursor.fetchall())
 
-	def storePerson(self, family, name, year, gender):
+	def storePerson(self, family, name, year, gender, father, mother):
 		cursor = self.__connection.cursor()
 		cursor.execute(
-			"INSERT INTO person(family_id, person_name, birth_year,gender)"+ \
-			"VALUES("+str(family)+","+"'"+name+"',"+str(year)+","+str(gender)+");"
+			"INSERT INTO person(family_id,person_name,birth_year,gender,father_id,mother_id)"+ \
+			"VALUES("+str(family)+","+ \
+			"'"+name+"',"+ \
+			str(year)+","+ \
+			str(gender)+","+ \
+			str(father)+","+ \
+			str(mother)+");"
 		)
 
 		cursor.execute(
 			"SELECT * FROM person;"
+		)
+		print(cursor.fetchall())
+
+	def storeCouple(self, husband, wife):
+		cursor = self.__connection.cursor()
+		cursor.execute(
+			"INSERT INTO couple(husband_id,wife_id)"+ \
+			"VALUES("+str(husband)+","+str(wife)+");"
+		)
+
+		cursor.execute(
+			"SELECT * FROM couple;"
 		)
 		print(cursor.fetchall())
 

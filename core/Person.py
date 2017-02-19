@@ -56,35 +56,29 @@ class Person:
 				" as mother of "+self.__fullName)
 
 	def setFather(self, father):
-		if mother.getGender() == GENDER.FEMALE and \
-		mother.getBirthYear() > self.__birthYear+10 and \
-		mother.getBirthYear() < self.__birthYear+60:
+		if father.getGender() == GENDER.FEMALE and \
+		father.getBirthYear() > self.__birthYear+10 and \
+		father.getBirthYear() < self.__birthYear+60:
 			self.__fatherId = father.getID()
 			father.addChildren(self)
 		else:
 			print("Error: [Person] Can not set "+father.getName()+ \
 				" as father of "+self.__fullName)
 
-	def addCouple(self, couple):
+	def setCouple(self, couple):
 		if couple.getGender()+self.__gender == 0 and \
-		ma.fabs(mother.getBirthYear()-self.__birthYear) < 60:
+		ma.fabs(couple.getBirthYear()-self.__birthYear) < 60:
 			self.__coupleIds.append(couple.getID())
 			couple.addCouple(self)
 		else:
 			print("Error: [Person] Can not add "+couple.getName()+ \
 				" as a couple of "+self.__fullName)
 
+	def addCouple(self, couple):
+		self.__coupleIds.append(couple.getID())
+
 	def addChildren(self, children):
-		if children.getBirthYear()+10 < self.__birthYear and \
-		children.getBirthYear()+60 > self.__birthYear:
-			self.__childIds.append(children.getID())
-			if self.__gender == GENDER.MALE:
-				children.setFather(self)
-			else:
-				children.setMother(self)
-		else:
-			print("Error: [Person] Can not add "+children.getName()+ \
-				" as a children of "+self.__fullName)
+		self.__childIds.append(children.getID())
 
 	def getID(self):
 		return self.__id
@@ -115,9 +109,9 @@ class Person:
 
 	def toString(self):
 		return str(self.getID())+". "+ \
-				self.getName()+" ("+ \
-				str(getBirthYear(self))+"), "+ \
-				GENDER.toString(self.getGender())
+			self.getName()+" ("+ \
+			str(self.getBirthYear())+"), "+ \
+			GENDER.toString(self.getGender())
 
 
 	
