@@ -28,6 +28,7 @@ class GENDER:
 			return GENDER.MALE
 
 class RELATIONSHIP:
+	IS_NULL = -1
 	IS_WIFE = 0
 	IS_HUSBAND = 1
 	IS_CHILDREN = 2
@@ -46,9 +47,9 @@ class Person:
 		self.__childIds = []
 
 	def setMother(self, mother):
-		if mother.getGender() == GENDER.FEMALE and \
-		mother.getBirthYear() > self.__birthYear+10 and \
-		mother.getBirthYear() < self.__birthYear+60:
+		if (mother.getGender() == GENDER.FEMALE 
+			and mother.getBirthYear() < self.__birthYear-10 
+			and mother.getBirthYear() > self.__birthYear-60):
 			self.__motherId = mother.getID()
 			mother.addChildren(self)
 		else:
@@ -56,9 +57,9 @@ class Person:
 				" as mother of "+self.__fullName)
 
 	def setFather(self, father):
-		if father.getGender() == GENDER.FEMALE and \
-		father.getBirthYear() > self.__birthYear+10 and \
-		father.getBirthYear() < self.__birthYear+60:
+		if (father.getGender() == GENDER.MALE 
+			and father.getBirthYear() < self.__birthYear-10 
+			and father.getBirthYear() > self.__birthYear-60):
 			self.__fatherId = father.getID()
 			father.addChildren(self)
 		else:

@@ -1,17 +1,18 @@
-import Queue as qu
-
 from core.Person import *
+import copy
 
 class FamilyTree:
 	def __init__(self, idf, familyName):
 		self.__idFamily = idf
 		self.__familyName = familyName
 		self.__tree = {}
-		self.__backTracer = {}
 
-	def addPerson(self, person):
+	def lookupPerson(self, idp):
+		return copy.deepcopy(self.__tree[idp])
+
+	def addPerson(self, idp, name, year, gender):
+		person = Person(idp, name, year, gender)
 		self.__tree[person.getID()] = person
-		self.__backTracer[person.getID()] = -1
 
 	def setFather(self, fatherId, childrenId):
 		if fatherId <= 0:
@@ -29,57 +30,58 @@ class FamilyTree:
 		self.__tree[person2Id].setCouple(self.__tree[person1Id])
 
 	def search(self, rootId, leafId):
-		if personId1 not in self.__tree or personId2 not in self.__tree:
+		if rootId not in self.__tree or leafId not in self.__tree:
 			print("Error: [FamilyTree] Person is not in family")
 			return
 
 		# perform BFS to find the relationship with 2 persons
 		relationships = []
-		Q = qu.Queue()
-		Q.put(rootId)
+		backTracer = {}
+		Q = [rootId]
 		history = []
-		while not Q.empty():
-			nodeId = Q.get()
+		while len(Q) > 0:
+			nodeId = Q.pop()
 			history.append(nodeId)
 
 			# current person is the interested person
 			if nodeId == leafId:
 				# trace back to find a relationship path, continue to search another path
-				p = self.__backTracer[leafId]
-				relationship = [p]
+				p = backTracer[leafId]
+				relationship = [(leafId, RELATIONSHIP.IS_NULL), p]
 				while p[0] != rootId:
-					p = self.__backTracer[p[0]]
+					p = backTracer[p[0]]
 					relationship.append(p)
 				relationships.append(relationship)
 
 			# search in his/her couples
 			for coupleID in self.__tree[nodeId].getCoupleIDs():
-				if coupleID not in history:
-					Q.put(coupleID)
-					if self.__tree[nodeId].getGender == GENDER.MALE:
-						self.__backTracer[coupleID] = (nodeId, RELATIONSHIP.HUSBAND)
+				if coupleID not in history and coupleID is not None:
+					Q.append(coupleID)
+					if self.__tree[nodeId].getGender() == GENDER.MALE:
+						backTracer[coupleID] = (nodeId, RELATIONSHIP.IS_HUSBAND)
 					else:
-						self.__backTracer[coupleID] = (nodeId, RELATIONSHIP.WIFE)
+						backTracer[coupleID] = (nodeId, RELATIONSHIP.IS_WIFE)
 
 			# search in his/her children
 			for childrenID in self.__tree[nodeId].getChildIDs():
-				if childrenID not in history:
-					Q.put(childrenID)
-					if self.__tree[nodeId].getGender == GENDER.MALE:
-						self.__backTracer[childrenID] = (nodeId, RELATIONSHIP.FATHER)
+				if childrenID not in history and childrenID is not None:
+					Q.append(childrenID)
+					if self.__tree[nodeId].getGender() == GENDER.MALE:
+						backTracer[childrenID] = (nodeId, RELATIONSHIP.IS_FATHER)
 					else:
-						self.__backTracer[childrenID] = (nodeId, RELATIONSHIP.MOTHER)
+						backTracer[childrenID] = (nodeId, RELATIONSHIP.IS_MOTHER)
 
 			# search in his/her father
-			if self.__tree[nodeId].getFatherID() not in history:
-				Q.put(self.__tree[nodeId].getFatherID())
-				self.__backTracer[self.__tree[nodeId].getFatherID()] = (nodeId, RELATIONSHIP.CHILDREN)
+			fatherID = self.__tree[nodeId].getFatherID()
+			if fatherID not in history and fatherID is not None:
+				Q.append(fatherID)
+				backTracer[self.__tree[nodeId].getFatherID()] = (nodeId, RELATIONSHIP.IS_CHILDREN)
 
 		return relationships
 
 	def toString(self):
 		stringData = ""
-		for key, person in self.__tree.iteritems():
+		for key, person in self.__tree.items():
 			stringData += person.toString()+"\n"
 		return stringData
 
