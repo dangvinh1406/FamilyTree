@@ -32,10 +32,10 @@ class FamilyTree:
 	def search(self, rootId, leafId):
 		if rootId not in self.__tree or leafId not in self.__tree:
 			print("Error: [FamilyTree] Person is not in family")
-			return
+			return []
 
 		# perform BFS to find the relationship with 2 persons
-		relationships = []
+		result = []
 		backTracer = {}
 		Q = [rootId]
 		history = []
@@ -51,11 +51,12 @@ class FamilyTree:
 				while p[0] != rootId:
 					p = backTracer[p[0]]
 					relationship.append(p)
-				relationships.append(relationship)
+				result = relationship
+				break
 
 			# search in his/her couples
 			for coupleID in self.__tree[nodeId].getCoupleIDs():
-				if coupleID not in history and coupleID is not None:
+				if coupleID is not None and coupleID not in history:
 					Q.append(coupleID)
 					if self.__tree[nodeId].getGender() == GENDER.MALE:
 						backTracer[coupleID] = (nodeId, RELATIONSHIP.IS_HUSBAND)
@@ -64,7 +65,7 @@ class FamilyTree:
 
 			# search in his/her children
 			for childrenID in self.__tree[nodeId].getChildIDs():
-				if childrenID not in history and childrenID is not None:
+				if childrenID is not None and childrenID not in history:
 					Q.append(childrenID)
 					if self.__tree[nodeId].getGender() == GENDER.MALE:
 						backTracer[childrenID] = (nodeId, RELATIONSHIP.IS_FATHER)
@@ -77,7 +78,9 @@ class FamilyTree:
 				Q.append(fatherID)
 				backTracer[self.__tree[nodeId].getFatherID()] = (nodeId, RELATIONSHIP.IS_CHILDREN)
 
-		return relationships
+		# [TODO] after find a path, post process to find the shortest path
+
+		return result
 
 	def toString(self):
 		stringData = ""

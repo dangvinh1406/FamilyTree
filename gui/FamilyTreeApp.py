@@ -2,7 +2,8 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath(os.getcwd()+"../../"))
 
-from Tkinter import *
+from tkinter import filedialog
+from tkinter import *
 
 from core.FamilyTree import *
 from core.Person import *
@@ -12,10 +13,7 @@ from utils.Utils import *
 class FamilyTreeApp(Frame):
 	def __init__(self, master):
 
-		# family tree
-		self.currentFamily = None
-		self.database = DatabaseManager()
-		self.currentFamilyId = -1
+		self.database = None
 
 		# Initialize window using the parent's constructor
 		Frame.__init__(self, master, width=800, height=600)
@@ -28,41 +26,34 @@ class FamilyTreeApp(Frame):
 		self.master.resizable(width=False, height=False)
 		self.pack()
 
-		# create label family name
-		self.varFamilyName = StringVar(value="Family name")
-		self.labelFamilyName = Label(self.master, textvariable=self.varFamilyName, \
-			font=("Helvetica", 16))
-		self.labelFamilyName.pack()
-
-		# create person information area
-		self.textPersonList = Text(self, width=70)
-		scrollbar = Scrollbar(self, orient="vertical", command=self.textPersonList.yview)
-		self.textPersonList.configure(yscrollcommand=scrollbar.set)
-		scrollbar.pack(side="left", fill="y")
-		self.textPersonList.pack(side="left", fill="both", expand=False)
-		self.textPersonList.bind("<Key>", lambda e: "break")
+		# # create person information area
+		# self.textPersonList = Text(self, width=70)
+		# scrollbar = Scrollbar(self, orient="vertical", command=self.textPersonList.yview)
+		# self.textPersonList.configure(yscrollcommand=scrollbar.set)
+		# scrollbar.pack(side="left", fill="y")
+		# self.textPersonList.pack(side="left", fill="both", expand=False)
+		# self.textPersonList.bind("<Key>", lambda e: "break")
 
 		# create menu bar
 		self.menuBar = Menu(self.master)
 
 		# create menu file
 		self.menuFile = Menu(self.menuBar, tearoff=0)
-		self.menuFile.add_command(label="New family", command=self.onClickNewFamily)
-		self.menuFile.add_command(label="Choose existed family", command=self.onClickChooseFamily)
-		self.menuFile.add_separator()
-		self.menuFile.add_command(label="Save all changes", command=self.onClickSave)
-		self.menuFile.add_command(label="Abort all changes", command=self.onClickAbort)
+		self.menuFile.add_command(label="New database", command=self.onClickNewDatabase)
+		self.menuFile.add_command(label="Choose existed database", command=self.onClickChooseDatabase)
 		self.menuFile.add_separator()
 		self.menuFile.add_command(label="Exit", command=self.master.quit)
 		self.menuBar.add_cascade(label="File", menu=self.menuFile)
 
-		# create menu edit
-		self.menuEdit = Menu(self.menuBar, tearoff=0)
-		self.menuEdit.add_command(label="Add person", command=self.onClickAddPerson)
-		self.menuEdit.add_command(label="Edit person", command=self.onClickEditPerson)
-		self.menuEdit.add_command(label="Remove person", command=self.onClickRemovePerson)
-		self.menuBar.add_cascade(label="Edit", menu=self.menuEdit)
-		self.menuBar.entryconfig("Edit", state="disabled")
+		# # create menu edit
+		# self.menuEdit = Menu(self.menuBar, tearoff=0)
+		# self.menuFile.add_command(label="Create family", command=self.onClickNewFamily)
+		# self.menuFile.add_separator()
+		# self.menuEdit.add_command(label="Add person", command=self.onClickAddPerson)
+		# self.menuEdit.add_command(label="Edit person", command=self.onClickEditPerson)
+		# self.menuEdit.add_command(label="Remove person", command=self.onClickRemovePerson)
+		# self.menuBar.add_cascade(label="Edit", menu=self.menuEdit)
+		# self.menuBar.entryconfig("Edit", state="disabled")
 
 		# create menu help
 		self.menuHelp = Menu(self.menuBar, tearoff=0)
@@ -72,6 +63,20 @@ class FamilyTreeApp(Frame):
 
 		# display menu
 		self.master.config(menu=self.menuBar)
+
+	def onClickNewDatabase(self):
+		dbFileName = filedialog.asksaveasfilename(
+			initialdir = "/", title = "Select file",
+			filetypes = (("Family data files","*.fam"),("all files","*.*"))
+		)
+		self.database = DatabaseManager(dbFileName)
+
+	def onClickChooseDatabase(self):
+		dbFileName = filedialog.askopenfilename(
+			initialdir = "/", title = "Select file",
+			filetypes = (("Family data files","*.fam"),("all files","*.*"))
+		)
+		self.database = DatabaseManager(dbFileName, isInit=False)
 
 	def onClickNewFamily(self):
 		def onClickCreateFamily():

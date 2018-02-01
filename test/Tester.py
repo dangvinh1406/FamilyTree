@@ -72,16 +72,14 @@ if __name__ == '__main__':
 
 	print(family.toString())
 
-	relationships = family.search(17, 10)
+	relationship = family.search(17, 10)
 
-	for relationship in relationships:
-		print("--------------")
-		for i in range(len(relationship)):
-			string = family.lookupPerson(relationship[i][0]).toString() \
-				+RELATIONSHIP_NAME[relationship[i][1]]
-			if i > 0:
-				string += family.lookupPerson(relationship[i-1][0]).toString()
-			print(string)
+	for i in range(len(relationship)):
+		string = family.lookupPerson(relationship[i][0]).toString() \
+			+RELATIONSHIP_NAME[relationship[i][1]]
+		if i > 0:
+			string += family.lookupPerson(relationship[i-1][0]).toString()
+		print(string)
 
 
 

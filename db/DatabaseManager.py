@@ -2,42 +2,41 @@ import sqlite3
 import os
 
 class DatabaseManager:
-	def __init__(self):
-		# if not os.path.isfile(db):
-
-		self.__connection = sqlite3.connect('dbft.db')
-		self.__connection.execute(
-			"""
-			CREATE TABLE IF NOT EXISTS family(
-				family_id INTEGER PRIMARY KEY AUTOINCREMENT,
-				family_name TEXT NOT NULL
-			);
-			"""
-		)
-		self.__connection.execute(
-			"""
-			CREATE TABLE IF NOT EXISTS person(
-				person_id INTEGER PRIMARY KEY AUTOINCREMENT,
-				family_id INT,
-				person_name TEXT NOT NULL,
-				birth_year INT NOT NULL,
-				gender INT NOT NULL,
-				father_id INT NOT NULL,
-				mother_id INT NOT NULL,
-				FOREIGN KEY(family_id) REFERENCES family(family_id)
-			);
-			"""
-		)
-		self.__connection.execute(
-			"""
-			CREATE TABLE IF NOT EXISTS couple(
-				husband_id INT NOT NULL,
-				wife_id INT NOT NULL,
-				FOREIGN KEY(husband_id) REFERENCES person(person_id),
-				FOREIGN KEY(wife_id) REFERENCES person(person_id)
-			);
-			"""
-		)
+	def __init__(self, dataFile="data.fam", isInit=True):
+		self.__connection = sqlite3.connect(dataFile)
+		if isInit:
+			self.__connection.execute(
+				"""
+				CREATE TABLE IF NOT EXISTS family(
+					family_id INTEGER PRIMARY KEY AUTOINCREMENT,
+					family_name TEXT NOT NULL
+				);
+				"""
+			)
+			self.__connection.execute(
+				"""
+				CREATE TABLE IF NOT EXISTS person(
+					person_id INTEGER PRIMARY KEY AUTOINCREMENT,
+					family_id INT,
+					person_name TEXT NOT NULL,
+					birth_year INT NOT NULL,
+					gender INT NOT NULL,
+					father_id INT NOT NULL,
+					mother_id INT NOT NULL,
+					FOREIGN KEY(family_id) REFERENCES family(family_id)
+				);
+				"""
+			)
+			self.__connection.execute(
+				"""
+				CREATE TABLE IF NOT EXISTS couple(
+					husband_id INT NOT NULL,
+					wife_id INT NOT NULL,
+					FOREIGN KEY(husband_id) REFERENCES person(person_id),
+					FOREIGN KEY(wife_id) REFERENCES person(person_id)
+				);
+				"""
+			)
 
 	def getCurrentId(self):
 		cursor = self.__connection.cursor()
